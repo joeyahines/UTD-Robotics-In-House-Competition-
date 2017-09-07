@@ -175,14 +175,14 @@ textPrint = TextPrint()
 while done==False:
     # EVENT PROCESSING STEP	
 	#Gets all input data from PyGame
-	for event in pygame.event.get(): # User did something
+	for event in pygame.event.get(): 
+		#If user clicked close
 		if event.type == pygame.QUIT: # If user clicked close
-			done=True # Flag that we are done so we exit this loop
+			#Flag that we are done so we exit this loop
+			done=True
 			
 	#Get current keys pressed
 	press = pygame.key.get_pressed()
-	
-	count = 0
             
 	# DRAWING STEP
 	# First, clear the screen to white. Don't put other drawing commands
@@ -249,8 +249,9 @@ while done==False:
 		name=pygame.key.name(asciiVal) 
 		
 		#Send data to robot
+		s.sendto('$\n'.encode(),robot)
 		s.sendto('K\n'.encode(),robot)
-		s.sendto((str(ascii)+'\n').encode(),robot)
+		s.sendto((name+'\n').encode(),robot)
 		s.sendto((str(press[asciiVal])+'\n').encode(),robot)
 		
 		#Print data to screen
@@ -261,21 +262,15 @@ while done==False:
 	pygame.display.flip()
 	
 	#Limit to 40 frames per second
-	#40 FPS usally works best, any faster the arduino may not be able to keep 
+	#40 FPS usually works best, any faster the Arduino may not be able to keep 
 	#up
 	clock.tick(40)
-	
-	#Check if joystick has been plugged in
-	try:
-		joystick = pygame.joystick.Joystick(0)
-		joystick.init()
-		joystickDetected = True
-	except pygame.error:
-		joystickDetected = False
     
 	
 #Close udp socket
 s.close()
 
-#Close window
-pygame.quit ()
+#Close window and quit
+pygame.display.quit()
+pygame.quit()
+sys.exit()
