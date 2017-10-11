@@ -58,10 +58,15 @@ class ControlLists:
 	#Return a string repersentation of the control
 	def toString(self) :
 		return 'K' + str(keyBoardButtons) + 'B' + str(joystickButtons) + 'A' + str(joystickAxises)
-		
+
+def sendDataToRobot(soc, type, id, data) :
+	packet = '~' + str(type) + str(id) + str(data);
+	s.sendto(packet.encode(),robot)	
+	
 #Open up a UDP socket, used for communicating to the robot
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+		
+		
 #Begin pygame
 pygame.init()
 
@@ -208,6 +213,7 @@ while done==False:
 				val = 0
 				
 			#Send data to the robot
+			s.sendto(('!'+'\n').encode(),robot) 
 			s.sendto(('J'+'\n').encode(),robot) 
 			s.sendto((str(i)+'\n').encode(),robot) 			
 			s.sendto((str(val)+'\n').encode(),robot) 
@@ -223,6 +229,7 @@ while done==False:
 			val = joystick.get_button(i)
 			
 			#Send data to robot
+			s.sendto(('!'+'\n').encode(),robot) 
 			s.sendto('B\n'.encode, robot) 	
 			s.sendto((str(i)+'\n').encode(), robot)
 			
@@ -249,22 +256,21 @@ while done==False:
 		name=pygame.key.name(asciiVal) 
 		
 		#Send data to robot
-		s.sendto('$\n'.encode(),robot)
-		s.sendto('K\n'.encode(),robot)
-		s.sendto((name+'\n').encode(),robot)
-		s.sendto((str(press[asciiVal])+'\n').encode(),robot)
-		
+		#s.sendto('!'.encode(),robot)
+		#s.sendto('K'.encode(),robot)
+		#s.sendto((name).encode(),robot)
+		#s.sendto((str(press[asciiVal])).encode(),robot)
+		sendDataToRobot(s,'K',name,press[asciiVal])	
 		#Print data to screen
 		input= name + ': ' + str(press[asciiVal])
 		textPrint.printToScreen(screen,input)
-			
 	#Update the window
 	pygame.display.flip()
 	
-	#Limit to 40 frames per second
-	#40 FPS usually works best, any faster the Arduino may not be able to keep 
+	#Limit to 20 frames per second
+	#50 FPS usually works best, any faster the Arduino may not be able to keep 
 	#up
-	clock.tick(40)
+	clock.tick(50)
     
 	
 #Close udp socket

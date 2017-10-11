@@ -48,7 +48,9 @@ void loop() {
   }
   
 }
-
+int getCommandPacket() {
+  
+}
 /* int getSerialData()
  *  Gets data from serial and returns its integer value
  */

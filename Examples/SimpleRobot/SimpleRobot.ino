@@ -1,4 +1,4 @@
-ws//Motor Pins
+//Motor Pins
 int leftMotorPin = 3;
 int leftMotorEn1 = 4;
 int leftMotorEn2 = 5;
@@ -29,93 +29,95 @@ void setup() {
 void loop() {
   //If data is received
   if (Serial.available() > 0) {
-    //Get incoming data's type, id and data
-    int type = getSerialData();
-    int id = getSerialData();
-    int data = getSerialData();
+    Serial.println(getSerialData());
+    if (false){//getSerialData() == '!') {
+      //Get incoming data's type, id and data
+      int type = getSerialData();
+      int id = getSerialData();
+      int data = getSerialData();
 
-    //If the type is a keboard input
-    if (type == 'K') {
-      //Switch statement for the key
-      //Each key its own case, to add more use the following template:
-      /*
-        case 'CHARACTER':
-          //code
-        break;    
-       */
-      switch(id) {
-        //Drive forward
-        case 'w':
-          if (data == '1') {
-            writeToRightMotor(100);
-            writeToLeftMotor(100);
-          }
-          else {
-            writeToRightMotor(0);
-            writeToLeftMotor(0);
-          }   
-         break;
-         //Drive backwards
-         case 's':
-          if (data == '1') {
-            writeToRightMotor(-100);
-            writeToLeftMotor(-100);
-          }
-          else {
-            writeToRightMotor(0);
-            writeToLeftMotor(0);
-          }   
-         break;
-         //Rotate Counterclockwise
-         case 'a':
-          if (data == '1') {
-            writeToRightMotor(100);
-            writeToLeftMotor(-100);
-          }
-          else {
-            writeToRightMotor(0);
-            writeToLeftMotor(0);
-          }   
-         break;
-         //Rotate Clockwise
-         case 'd':
-          if (data == '1') {
-            writeToRightMotor(-100);
-            writeToLeftMotor(100);
-          }
-          else {
-            writeToRightMotor(0);
-            writeToLeftMotor(0);
-          }   
-         break;
-         
+      //If the type is a keboard input
+      if (type == 'K') {
+        //Switch statement for the key
+        //Each key its own case, to add more use the following template:
+        /*
+          case 'CHARACTER':
+            //code
+          break;    
+         */
+        switch(id) {
+          //Drive forward
+          case 'w':
+            if (data == '1') {
+              writeToRightMotor(100);
+              writeToLeftMotor(100);
+              Serial.println('w');
+            }
+            else {
+              writeToRightMotor(0);
+              writeToLeftMotor(0);
+            }   
+           break;
+           //Drive backwards
+           case 's':
+            if (data == '1') {
+              writeToRightMotor(-100);
+              writeToLeftMotor(-100);
+            }
+            else {
+              writeToRightMotor(0);
+              writeToLeftMotor(0);
+            }   
+           break;
+           //Rotate Counterclockwise
+           case 'a':
+            if (data == '1') {
+              writeToRightMotor(100);
+              writeToLeftMotor(-100);
+            }
+            else {
+              writeToRightMotor(0);
+              writeToLeftMotor(0);
+            }   
+           break;
+           //Rotate Clockwise
+           case 'd':
+            if (data == '1') {
+              writeToRightMotor(-100);
+              writeToLeftMotor(100);
+            }
+            else {
+              writeToRightMotor(0);
+              writeToLeftMotor(0);
+            }   
+           break;
+           
+        }
+        
+      }
+  
+      //J stands for joystick and its id is the axis number of a joystick
+      else if (type == 'J') {
+        //Second is the id of input
+        int id = getSerialData();
+        //Since the joystick is an analog value, it has an extra bit of data for the value
+        int data = getSerialData();
+        Serial.println("Joystick " + String(id) + ": " + String(data));
+      }
+      //B stands for joystick button and its id is the number of the button
+      else if (type == 'B') {
+        //Second is the id of input
+        int id = getSerialData();
+        Serial.println("Button: " + String(id));
       }
       
     }
-
-    //J stands for joystick and its id is the axis number of a joystick
-    else if (type == 'J') {
-      //Second is the id of input
-      int id = getSerialData();
-      //Since the joystick is an analog value, it has an extra bit of data for the value
-      int data = getSerialData();
-      Serial.println("Joystick " + String(id) + ": " + String(data));
-    }
-    //B stands for joystick button and its id is the number of the button
-    else if (type == 'B') {
-      //Second is the id of input
-      int id = getSerialData();
-      Serial.println("Button: " + String(id));
-    }
-    
   }
-    
-
 }
 
 /* int getSerialData()
  *  Gets a packet from serial and returns its
- *  intger value
+ *  ASCII code value contained within
  */
 int getSerialData() {
   //String for storing input
@@ -129,6 +131,10 @@ int getSerialData() {
     int inChar = Serial.read();
 
     //Check it the end of packet is received
+    if (inChar == 33) {
+      //Ignore ASCII 10
+      continue;
+    }
     if (inChar == 10) {
       //Ignore ASCII 10
       continue;
@@ -148,6 +154,7 @@ int getSerialData() {
   //Return char
   return inString.toInt();
 }
+
 
 /*  int convertPercentToMotorValue(int value
  *  Takes a percent value of -100 to 100 and converts to a PWM value of
