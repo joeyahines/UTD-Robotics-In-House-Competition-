@@ -38,18 +38,14 @@ void setup() {
   //Begin WiFi AP
   WiFi.softAP(ssid);
 
-  
   //Print out connection status and IP address
   Serial.println("");
   Serial.println("AP Online");  
   Serial.println("IP address: ");
   Serial.println(WiFi.softAPIP());
   
-
   //Begin listening for UDP packets on port
   Udp.begin(port);
-  
-  
 }
  
 void loop() {
@@ -68,8 +64,8 @@ void loop() {
     String dataRecv(incomingPacket);
     //Print the packet to serial
     Serial.println(dataRecv);
-    
   }
+  
   //Clear the incomingPacket array
   memset(incomingPacket, 0, UDP_TX_PACKET_MAX_SIZE);
 }
