@@ -7,7 +7,7 @@
 #include <UTDRWirelessComms.h>
 
 //Create new UTDRWirelessComms named input
-UTDRWirelessComms input = new UTDRWirelessComms();
+UTDRWirelessComms input = UTDRWirelessComms();
  
 void setup() {
   //Setup Serial
