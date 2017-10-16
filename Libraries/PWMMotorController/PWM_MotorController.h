@@ -10,8 +10,8 @@
 */
 
 // ensure this library description is only included once
-#ifndef Test_h
-#define Test_h
+#ifndef PWM_MotorController_h
+#define PWM_MotorController_h
 
 #include "Arduino.h"
 
@@ -28,7 +28,8 @@ class PWM_MotorController {
   //Public Class Functions
   public:
 	void writeToMotor(int value);
-	PWM_MotorController(int, int, int);
+	PWM_MotorController(int, int, int, int, int);
+	PWM_MotorController(int, int);
 	~PWM_MotorController();
 };
 

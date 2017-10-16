@@ -5,9 +5,13 @@
  */
 
 #include <UTDRWirelessComms.h>
-
+#include <SoftwareSerial.h>
+//New SoftwareSerial object for UTDRWirelessComms
+int rx = 8;
+int tx = 7;
+SoftwareSerial serial(rx,tx);
 //Create new UTDRWirelessComms named input
-UTDRWirelessComms input = UTDRWirelessComms();
+UTDRWirelessComms input = UTDRWirelessComms(&serial);
  
 void setup() {
   //Setup Serial
@@ -17,7 +21,7 @@ void setup() {
 
 void loop() {
   //Wait for serial
-  if (Serial.available()) {
+  if (serial.available()) {
     //New int array for storing packet data
     int * packet = new int[3];
 

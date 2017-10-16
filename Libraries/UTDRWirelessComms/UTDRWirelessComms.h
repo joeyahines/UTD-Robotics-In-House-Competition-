@@ -8,7 +8,7 @@ Robotics wireless controller.
   
 */
 #include "Arduino.h"
-
+#include <SoftwareSerial.h>
 #ifndef UTDRWirelessComms_h
 #define UTDRWirelessComms_h
 
@@ -18,12 +18,14 @@ class UTDRWirelessComms {
 	int MaxInSize;
 	int packetSize;
 	
+	SoftwareSerial * serial;
+	
 	public:
 	
 	void getCommandPacket(int[]);
 	
-	UTDRWirelessComms();
-	UTDRWirelessComms(int, int);
+	UTDRWirelessComms(SoftwareSerial *);
+	UTDRWirelessComms(SoftwareSerial *, int, int);
 
 };
 

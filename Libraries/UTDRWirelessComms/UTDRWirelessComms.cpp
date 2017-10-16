@@ -10,6 +10,7 @@ Robotics wireless controller.
 
 #include "UTDRWirelessComms.h"
 #include "Arduino.h"
+#include <SoftwareSerial.h>
 
 /* void UTDRWirelessComms::getCommandPacket(int packet[])
  * Parses a packet from serial in the style of ~{type}{id}{data}\LF 
@@ -22,7 +23,7 @@ void UTDRWirelessComms::getCommandPacket(int packet[]) {
 	boolean packetParsed = false;
 	
 	//Get the line from Serial and count how many bytes it had
-	int sizeOfInput = Serial.readBytesUntil(10,in,MaxInSize);
+	int sizeOfInput = serial.readBytesUntil(10,in,MaxInSize);
 	
 	//ndx of the input buffer
 	int in_ndx = 0;
@@ -92,12 +93,14 @@ void UTDRWirelessComms::getCommandPacket(int packet[]) {
 	}
 }
 
-UTDRWirelessComms::UTDRWirelessComms() {
+UTDRWirelessComms::UTDRWirelessComms(int tx, int rx) {
 	MaxInSize = 10;
 	packetSize = 3;	
+	serial = SoftwareSerial(rx,tx);
 }
 
-UTDRWirelessComms::UTDRWirelessComms(int maxSize, int pSize) {
+UTDRWirelessComms::UTDRWirelessComms(int tx, int rx, int maxSize, int pSize) {
 	MaxInSize = maxSize;
 	packetSize = pSize;
+	serial = SoftwareSerial(rx,tx);
 }
