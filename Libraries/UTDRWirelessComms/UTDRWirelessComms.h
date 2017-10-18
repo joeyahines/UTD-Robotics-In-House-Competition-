@@ -15,8 +15,8 @@ Robotics wireless controller.
 class UTDRWirelessComms {
 	private:
 	//Default input size and packet size
-	int MaxInSize;
-	int packetSize;
+	int MaxInSize = 10;
+	int packetSize = 3;
 	
 	SoftwareSerial * serial;
 	

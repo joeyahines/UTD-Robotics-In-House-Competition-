@@ -12,6 +12,30 @@ Robotics wireless controller.
 #include "Arduino.h"
 #include <SoftwareSerial.h>
 
+/*
+char * UTDRWirelessComms::readSerialUntilPacket(char * buffer) {
+	bool packetFound = false:
+	
+	int j;
+	while(!packetFound && j < MaxInSize) {
+		char next = serial->read();
+		
+		if (next == 10) {
+			packetFound = true;
+		}
+		else if (next == '~') {
+			j = 0;
+		}
+		else {
+			buffer[j] = byte;
+		}
+		
+		
+	}
+}
+*/
+
+
 /* void UTDRWirelessComms::getCommandPacket(int packet[])
  * Parses a packet from serial in the style of ~{type}{id}{data}\LF 
  * This functions then returns the int value of the three parts
@@ -23,7 +47,7 @@ void UTDRWirelessComms::getCommandPacket(int packet[]) {
 	boolean packetParsed = false;
 	
 	//Get the line from Serial and count how many bytes it had
-	int sizeOfInput = serial.readBytesUntil(10,in,MaxInSize);
+	int sizeOfInput = serial->readBytesUntil(10,in,MaxInSize);
 	
 	//ndx of the input buffer
 	int in_ndx = 0;
@@ -37,7 +61,7 @@ void UTDRWirelessComms::getCommandPacket(int packet[]) {
 			
 			//Check for the new packet symbol
 			if(in[in_ndx] == '~') {
-				//If the symbol is in the moddle of the buffer, start reading
+				//If the symbol is in the middle of the buffer, start reading
 				//new packet
 				if (in_ndx > 0) {
 					packet_ndx  = 0;
@@ -64,6 +88,13 @@ void UTDRWirelessComms::getCommandPacket(int packet[]) {
 					//String for storing data bytes as the come in
 					String data;
 					
+					//TODO Test if this is needed
+					bool isNegative = false;
+					if (in[j] == '-') {
+						data += in[j];
+						j++;
+					}
+					
 					//Add the data bytes from the buffer to data until their is 
 					//no more numerical data 
 					while(in[j] != 0 && isdigit(in[j])) {   
@@ -74,7 +105,8 @@ void UTDRWirelessComms::getCommandPacket(int packet[]) {
 					//Covert data from string to int and place it in index 3 of
 					//the output packet
 					packet[packet_ndx] = data.toInt();
-					//packet has now been pasred
+					
+					//packet has now been parsed
 					packetParsed = true;  
 
 					} 
@@ -92,15 +124,14 @@ void UTDRWirelessComms::getCommandPacket(int packet[]) {
 		}
 	}
 }
-
-UTDRWirelessComms::UTDRWirelessComms(int tx, int rx) {
-	MaxInSize = 10;
-	packetSize = 3;	
-	serial = SoftwareSerial(rx,tx);
+UTDRWirelessComms::UTDRWirelessComms(SoftwareSerial * s) {
+	serial = s;
+	serial->begin(9600);
 }
 
-UTDRWirelessComms::UTDRWirelessComms(int tx, int rx, int maxSize, int pSize) {
+UTDRWirelessComms::UTDRWirelessComms(SoftwareSerial * s, int maxSize, int pSize) {
 	MaxInSize = maxSize;
 	packetSize = pSize;
-	serial = SoftwareSerial(rx,tx);
+	serial = s;
+	serial->begin(9600);
 }

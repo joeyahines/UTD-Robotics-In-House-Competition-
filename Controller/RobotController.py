@@ -213,11 +213,7 @@ while done==False:
 				val = 0
 				
 			#Send data to the robot
-			s.sendto(('!'+'\n').encode(),robot) 
-			s.sendto(('J'+'\n').encode(),robot) 
-			s.sendto((str(i)+'\n').encode(),robot) 			
-			s.sendto((str(val)+'\n').encode(),robot) 
-			
+			sendDataToRobot(s,'J',i,val)	
 			#Print data to screen
 			input = str(i) + ': ' + str(val)
 			textPrint.printToScreen(screen,input)
@@ -229,17 +225,17 @@ while done==False:
 			val = joystick.get_button(i)
 			
 			#Send data to robot
-			s.sendto(('!'+'\n').encode(),robot) 
-			s.sendto('B\n'.encode, robot) 	
-			s.sendto((str(i)+'\n').encode(), robot)
+
 			
 			#Send 1 if the button is pressed
 			if joystick.get_button(i) :
-				s.sendto(('1\n').encode(), robot) 
+				pressed = 1
 			#Otherwise send 0
 			else :
-				s.sendto(('0\n').encode(), robot) 		
-				
+				pressed = 0		
+			
+			sendDataToRobot(s,'B',val,pressed)	
+			
 			#Print data to screen
 			input = 'B' + str(i) + ': ' + val 
 			textPrint.printToScreen(screen, input)
@@ -270,7 +266,7 @@ while done==False:
 	#Limit to 20 frames per second
 	#50 FPS usually works best, any faster the Arduino may not be able to keep 
 	#up
-	clock.tick(50)
+	clock.tick(20)
     
 	
 #Close udp socket

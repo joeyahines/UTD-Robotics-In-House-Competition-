@@ -1,214 +1,75 @@
-//Motor Pins
-int leftMotorPin = 3;
-int leftMotorEn1 = 4;
-int leftMotorEn2 = 5;
+/*  SimpleRobot
+ *  Written By: Joey Hines (joey.ahines@gmail.com)
+ *  
+ *  Controls one input 
+ */
 
-int rightMotorPin = 3;
-int rightMotorEn1 = 4;
-int rightMotorEn2 = 5;
+//Include PWM_MotorController library
+#include <PWM_MotorController.h>
+//Include UTDRWirelessComms
+#include <UTDRWirelessComms.h>
+#include <SoftwareSerial.h>
+
+//New SoftwareSerial object for UTDRWirelessComms
+int rx = 8;   //Connect TX on ESP8266
+int tx = 7;   //Connect RX of ESP8266
+
+SoftwareSerial serial(rx,tx);
+//Create new UTDRWirelessComms named input
+UTDRWirelessComms input = UTDRWirelessComms(&serial);
 
 
+//Create a PWM_MotorController called motor on pin 3,4, and 5
+// Pin 3: PWM Pin
+// Pin 4: Enable 1
+// Pin 5: Enable 2
+PWM_MotorController motor = PWM_MotorController(3,5,4);
+ 
 void setup() {
-  // put your setup code here, to run once:
+  //Setup Serial
   Serial.begin(9600);
-  Serial.setTimeout(10);
-
-  //Pin Setup
-  //Left Motor Enable Pins
-  pinMode(leftMotorEn1,OUTPUT);
-  pinMode(leftMotorEn2,OUTPUT);
-
-  //Right Motor Enable Pins
-  pinMode(rightMotorEn1,OUTPUT);
-  pinMode(rightMotorEn2,OUTPUT);
-  
-
-  
+  Serial.println("Starting...");
 }
 
 void loop() {
-  //If data is received
-  if (Serial.available() > 0) {
-    Serial.println(getSerialData());
-    if (false){//getSerialData() == '!') {
-      //Get incoming data's type, id and data
-      int type = getSerialData();
-      int id = getSerialData();
-      int data = getSerialData();
+  //Wait for serial from esp8266
+  if (serial.available()) {
+    //New int array for storing packet data
+    int * packet = new int[3];
 
-      //If the type is a keboard input
-      if (type == 'K') {
-        //Switch statement for the key
-        //Each key its own case, to add more use the following template:
-        /*
-          case 'CHARACTER':
-            //code
-          break;    
-         */
-        switch(id) {
-          //Drive forward
-          case 'w':
-            if (data == '1') {
-              writeToRightMotor(100);
-              writeToLeftMotor(100);
-              Serial.println('w');
-            }
-            else {
-              writeToRightMotor(0);
-              writeToLeftMotor(0);
-            }   
-           break;
-           //Drive backwards
-           case 's':
-            if (data == '1') {
-              writeToRightMotor(-100);
-              writeToLeftMotor(-100);
-            }
-            else {
-              writeToRightMotor(0);
-              writeToLeftMotor(0);
-            }   
-           break;
-           //Rotate Counterclockwise
-           case 'a':
-            if (data == '1') {
-              writeToRightMotor(100);
-              writeToLeftMotor(-100);
-            }
-            else {
-              writeToRightMotor(0);
-              writeToLeftMotor(0);
-            }   
-           break;
-           //Rotate Clockwise
-           case 'd':
-            if (data == '1') {
-              writeToRightMotor(-100);
-              writeToLeftMotor(100);
-            }
-            else {
-              writeToRightMotor(0);
-              writeToLeftMotor(0);
-            }   
-           break;
-           
-        }
-        
+    //Get the command packet
+    input.getCommandPacket(packet);
+    // input[0] : type of input [K,J,B]
+    // input[1] : id of input [W,A,S,D...]
+    // input[2] : data of input 
+
+    //If the type of the data is Keyboard
+    if (packet[0] == 'K') {
+      switch(packet[1]) {
+        //Case for if the key pressed was W
+        case 'w' : 
+           //Write data to motor
+           if(packet[2] == 1) {
+            //Full Speed
+            motor.writeToMotor(100); 
+           }
+           else {
+            //Stopped
+            motor.writeToMotor(0);  
+           }
+           break; //Do not continue into next case 
+        //Default case
+        default:
+           break;   
       }
-  
-      //J stands for joystick and its id is the axis number of a joystick
-      else if (type == 'J') {
-        //Second is the id of input
-        int id = getSerialData();
-        //Since the joystick is an analog value, it has an extra bit of data for the value
-        int data = getSerialData();
-        Serial.println("Joystick " + String(id) + ": " + String(data));
-      }
-      //B stands for joystick button and its id is the number of the button
-      else if (type == 'B') {
-        //Second is the id of input
-        int id = getSerialData();
-        Serial.println("Button: " + String(id));
-      }
-      
-    }
-  }
-}
-
-/* int getSerialData()
- *  Gets a packet from serial and returns its
- *  ASCII code value contained within
- */
-int getSerialData() {
-  //String for storing input
-  String inString;
-
-  //Run until full packet is received 
-  while (1) {
-    //Wait for serial connection
-    while (!Serial.available());
-    //Read in the next char
-    int inChar = Serial.read();
-
-    //Check it the end of packet is received
-    if (inChar == 33) {
-      //Ignore ASCII 10
-      continue;
-    }
-    if (inChar == 10) {
-      //Ignore ASCII 10
-      continue;
-    }
-    if (inChar == 13) {
-      //Packet is done, break
-      break;
     }
 
-    //Add char to string
-    if (!isDigit(inChar)) {
-      inString += inChar;
-    }
-    inString += (char)inChar;
+    //Clear packet memory
+    delete packet;
   }
 
-  //Return char
-  return inString.toInt();
+  delay(20);
+
 }
-
-
-/*  int convertPercentToMotorValue(int value
- *  Takes a percent value of -100 to 100 and converts to a PWM value of
- *  0 to 255
- */
-int convertPercentToMotorValue(int value) {
-  return value * 2.55;
-}
-
-/*  void writeToRightMotor(int value)
- *  Writes a percent speed to the right motor
- */
-void writeToRightMotor(int value) {
-  //Converts a percent
-  int pwmValue = convertPercentToMotorValue(value);
-
-  //If the PPWM value is positive, set the enable pins to forward
-  if (pwmValue > 0) {
-    digitalWrite(rightMotorEn1, HIGH);
-    digitalWrite(rightMotorEn2, LOW);
-  }
-  //If the PPWM value is negative, set the enable pins to backwards
-  else if (pwmValue < 0) {
-    digitalWrite(rightMotorEn1, LOW);
-    digitalWrite(rightMotorEn2, HIGH);
-  }
-
-  //Write the absolute value PWM to the motor
-  analogWrite(rightMotorPin, abs(pwmValue));
-}
-
-/*  void writeToLeftMotor(int value)
- *  Writes a percent speed to the left motor
- */
-void writeToLeftMotor(int value) {
-  //Converts a percent
-  int pwmValue = convertPercentToMotorValue(value);
-
-  //If the PPWM value is positive, set the enable pins to forward
-  if (pwmValue > 0) {
-    digitalWrite(leftMotorEn1, HIGH);
-    digitalWrite(leftMotorEn2, LOW);
-  }
-  //If the PPWM value is negative, set the enable pins to backwards
-  else if (pwmValue < 0) {
-    digitalWrite(leftMotorEn1, LOW);
-    digitalWrite(leftMotorEn2, HIGH);
-  }
-
-  //Write the absolute value PWM to the motor
-  analogWrite(leftMotorPin, abs(pwmValue));
-}
-
-
-
 
 
