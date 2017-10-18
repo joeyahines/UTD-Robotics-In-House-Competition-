@@ -21,9 +21,9 @@ UTDRWirelessComms input = UTDRWirelessComms(&serial);
 
 //Create a PWM_MotorController called motor on pin 3,4, and 5
 // Pin 3: PWM Pin
-// Pin 4: Enable 1
-// Pin 5: Enable 2
-PWM_MotorController motor = PWM_MotorController(3,5,4);
+// Pin 4: In 1
+// Pin 5: In 2
+PWM_MotorController motor = PWM_MotorController(3,4,5);
  
 void setup() {
   //Setup Serial
@@ -49,6 +49,7 @@ void loop() {
         //Case for if the key pressed was W
         case 'w' : 
            //Write data to motor
+           Serial.println(packet[2]);
            if(packet[2] == 1) {
             //Full Speed
             motor.writeToMotor(100); 
