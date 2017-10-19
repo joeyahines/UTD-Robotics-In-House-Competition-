@@ -28,7 +28,7 @@ class PWM_MotorController {
   //Public Class Functions
   public:
 	void writeToMotor(int value);
-	PWM_MotorController(int, int, int, int, int);
+	PWM_MotorController(int, int, int);
 	PWM_MotorController(int, int);
 	~PWM_MotorController();
 };
