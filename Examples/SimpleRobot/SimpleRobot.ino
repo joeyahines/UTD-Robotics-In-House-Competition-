@@ -20,11 +20,20 @@ UTDRWirelessComms input = UTDRWirelessComms(&serial);
 
 
 //Create a PWM_MotorController called motor on pin 3,4, and 5
+//RightMotor
 // Pin 3: PWM Pin
 // Pin 4: In 1
 // Pin 5: In 2
-PWM_MotorController motor = PWM_MotorController(3,4,5);
- 
+//LeftMotor
+// Pin 8: PWM Pin
+// Pin 9: In 1
+// Pin 10: In 2
+PWM_MotorController rightMotor = PWM_MotorController(3,4,5);
+PWM_MotorController leftMotor = PWM_MotorController(8,9,10);
+
+//Used to track the input that was pressed
+char lastActiveInput = 0;
+
 void setup() {
   //Setup Serial
   Serial.begin(9600);
@@ -49,14 +58,32 @@ void loop() {
         //Case for if the key pressed was W
         case 'w' : 
            //Write data to motor
-           Serial.println(packet[2]);
            if(packet[2] == 1) {
-            //Full Speed
-            motor.writeToMotor(100); 
+            //Full Speed forward
+            rightMotor.writeToMotor(100);
+            leftMotor.writeToMotor(100); 
+            lastActiveInput = 'w';
            }
-           else {
+           else if (packet[2] == 0 && lastActiveInput == 'w'){
             //Stopped
-            motor.writeToMotor(0);  
+            rightMotor.writeToMotor(0);  
+            leftMotor.writeToMotor(0);  
+            lastActiveInput = 0;
+           }
+           break; //Do not continue into next case 
+        case 'a' : 
+           //Write data to motor
+           if(packet[2] == 1) {
+            //Full Speed backward
+            rightMotor.writeToMotor(-100);  
+            leftMotor.writeToMotor(-100);   
+            lastActiveInput = 'a';
+           }
+           else if (packet[2] == 0 && lastActiveInput == 'a'){
+            //Stopped
+            rightMotor.writeToMotor(0);  
+            leftMotor.writeToMotor(0);  
+            lastActiveInput = 0;
            }
            break; //Do not continue into next case 
         //Default case
