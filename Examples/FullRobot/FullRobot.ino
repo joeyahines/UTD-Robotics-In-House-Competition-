@@ -71,13 +71,14 @@ void loop() {
             lastActiveInput = 0;
            }
            break; //Do not continue into next case 
+        //Case for if the key pressed was S
         case 's' : 
            //Write data to motor
            if(packet[2] == 1) {
             //Full Speed backward
             rightMotor.writeToMotor(-100);  
             leftMotor.writeToMotor(-100);   
-            lastActiveInput = 'a';
+            lastActiveInput = 's';
            }
            else if (packet[2] == 0 && lastActiveInput == 'a'){
             //Stopped
@@ -86,10 +87,11 @@ void loop() {
             lastActiveInput = 0;
            }
            break; //Do not continue into next case 
+        //Case for if the key pressed was A
         case 'a' : 
            //Write data to motor
            if(packet[2] == 1) {
-            //Full Speed backward
+            //Rotate Counter-Clockwise
             rightMotor.writeToMotor(100);  
             leftMotor.writeToMotor(-100);   
             lastActiveInput = 'a';
@@ -101,13 +103,14 @@ void loop() {
             lastActiveInput = 0;
            }
            break; //Do not continue into next case 
+        //Case for if the key pressed was D
         case 'd' : 
            //Write data to motor
            if(packet[2] == 1) {
-            //Full Speed backward
+            //Rotate Clockwise
             rightMotor.writeToMotor(-100);  
             leftMotor.writeToMotor(100);   
-            lastActiveInput = 'a';
+            lastActiveInput = 'd';
            }
            else if (packet[2] == 0 && lastActiveInput == 'a'){
             //Stopped
