@@ -11,8 +11,8 @@
 #include <SoftwareSerial.h>
 
 //New SoftwareSerial object for UTDRWirelessComms
-int rx = 8;   //Connect TX on ESP8266
-int tx = 7;   //Connect RX of ESP8266
+int rx = 7;   //Connect RX on ESP8266
+int tx = 8;   //Connect TX of ESP8266
 
 SoftwareSerial serial(rx,tx);
 //Create new UTDRWirelessComms named input
@@ -25,11 +25,11 @@ UTDRWirelessComms input = UTDRWirelessComms(&serial);
 // Pin 4: In 1
 // Pin 5: In 2
 //LeftMotor
-// Pin 8: PWM Pin
-// Pin 9: In 1
-// Pin 10: In 2
+// Pin 9: PWM Pin
+// Pin 10: In 1
+// Pin 11: In 2
 PWM_MotorController rightMotor = PWM_MotorController(3,4,5);
-PWM_MotorController leftMotor = PWM_MotorController(8,9,10);
+PWM_MotorController leftMotor = PWM_MotorController(9,10,11);
 
 //Used to track the input that was pressed
 char lastActiveInput = 0;
