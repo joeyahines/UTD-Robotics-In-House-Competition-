@@ -209,7 +209,7 @@ while done == False:
             # Get value of the axis
             val = int(round(joystick.get_axis(i), 2) * 100)
             # If the value is in the deadband
-            if (val < 10 or val > -10):
+            if (val < 10 and val > -10):
                 # Make it 0
                 val = 0
 
@@ -236,7 +236,7 @@ while done == False:
             sendDataToRobot(s, 'B', val, pressed)
 
             # Print data to screen
-            input = 'B' + str(i) + ': ' + val
+            input = 'B' + str(i) + ': ' + str(val)
             textPrint.printToScreen(screen, input)
 
     textPrint.printToScreen(screen, 'Keyboard:')
